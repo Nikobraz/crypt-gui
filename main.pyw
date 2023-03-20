@@ -1,20 +1,10 @@
 import binascii
+import ctypes
 from tkinter import *
 from crypt import encrypt, decrypt
 import base64
 from tkinter.messagebox import showerror
-
-
-def copy(event):
-    event.widget.event_generate("<<Copy>>")
-
-
-def paste(event):
-    event.widget.event_generate("<<Paste>>")
-
-
-def cut(event):
-    event.widget.event_generate("<<Cut>>")
+import platform
 
 
 def b64encode():
@@ -82,13 +72,59 @@ password_text.insert(END, "Password")
 decrypted_text.insert(END, "Decrypted data")
 encrypted_text.insert(END, "Encrypted data")
 
-root.bind('<Control-c>', copy)
-root.bind('<Control-v>', paste)
-root.bind('<Control-x>', cut)
 
-root.bind('<Control-Cyrillic_es>', copy)
-root.bind('<Control-Cyrillic_em>', paste)
-root.bind('<Control-Cyrillic_che>', cut)
+#def test(event):
+#    print('event.char:', event.char)
+#    print('event.keycode:', event.keycode)
+#    print('event.keysym:', event.keysym)
+#    print('---')
+#
+#
+#root.bind('<Key>', test)
+
+if platform.system() == 'Windows':
+    def is_ru_lang_keyboard():
+        u = ctypes.windll.LoadLibrary("user32.dll")
+        pf = getattr(u, "GetKeyboardLayout")
+        return hex(pf(0)) == '0x4190419'
+
+
+    def keys(event):
+        if is_ru_lang_keyboard():
+            if event.keycode == 86:
+                event.widget.event_generate("<<Paste>>")
+            if event.keycode == 67:
+                event.widget.event_generate("<<Copy>>")
+            if event.keycode == 88:
+                event.widget.event_generate("<<Cut>>")
+            if event.keycode == 65535:
+                event.widget.event_generate("<<Clear>>")
+            if event.keycode == 65:
+                event.widget.event_generate("<<SelectAll>>")
+
+
+    root.bind("<Control-KeyPress>", keys)
+
+elif platform.system() == 'Darwin':
+    def copy(event):
+        event.widget.event_generate("<<Copy>>")
+
+
+    def paste(event):
+        event.widget.event_generate("<<Paste>>")
+
+
+    def cut(event):
+        event.widget.event_generate("<<Cut>>")
+
+
+    root.bind('<Control-c>', copy)
+    root.bind('<Control-v>', paste)
+    root.bind('<Control-x>', cut)
+
+    root.bind('<Control-Cyrillic_es>', copy)
+    root.bind('<Control-Cyrillic_em>', paste)
+    root.bind('<Control-Cyrillic_che>', cut)
 
 if __name__ == "__main__":
     mainloop()
