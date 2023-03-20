@@ -5,6 +5,18 @@ import base64
 from tkinter.messagebox import showerror
 
 
+def copy(event):
+    event.widget.event_generate("<<Copy>>")
+
+
+def paste(event):
+    event.widget.event_generate("<<Paste>>")
+
+
+def cut(event):
+    event.widget.event_generate("<<Cut>>")
+
+
 def b64encode():
     encrypted_text.delete("1.0", 'end-1c')
     input_data = decrypted_text.get("1.0", 'end-1c')
@@ -70,6 +82,13 @@ password_text.insert(END, "Password")
 decrypted_text.insert(END, "Decrypted data")
 encrypted_text.insert(END, "Encrypted data")
 
+root.bind('<Control-c>', copy)
+root.bind('<Control-v>', paste)
+root.bind('<Control-x>', cut)
+
+root.bind('<Control-Cyrillic_es>', copy)
+root.bind('<Control-Cyrillic_em>', paste)
+root.bind('<Control-Cyrillic_che>', cut)
 
 if __name__ == "__main__":
     mainloop()
